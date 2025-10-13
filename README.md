@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Echoo - Real-Time Chat Application
 
-## Getting Started
+A real-time messaging and voice chat application inspired by Discord, built with a React frontend and a Node.js backend.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+* **Real-time Text Messaging:** Instant messaging in channels and direct messages.
+* **Servers and Channels:** Organize communities into servers with multiple text and voice channels.
+* **User Authentication:** Secure user registration and login.
+* **File Sharing:** Share images and files within conversations.
+* **Online Presence:** See the status of other users (online, away, etc.).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+* **Frontend:** React, Vite, Axios
+* **Backend:** Node.js, Express.js, Socket.IO
+* **Database:** Prisma ORM with a PostgreSQL database
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🚀 Getting Started
 
-To learn more about Next.js, take a look at the following resources:
+Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Prerequisites
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Make sure you have the following software installed on your machine:
 
-## Deploy on Vercel
+* Node.js (v18 or later is recommended)
+* npm (comes with Node.js)
+* A PostgreSQL database server
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🔧 Installation
+Clone the repository to your local machine:
+
+### 🔧 Installation
+
+1.  **Clone the repository to your local machine:**
+    ```bash
+    git clone https://github.com/your-username/Echoo.git
+    cd Echoo
+    ```
+
+2.  **Set up the Backend:**
+    * Navigate to the main directory:
+        ```bash
+        cd echoo
+        ```
+    * Install the dependencies:
+        ```bash
+        npm install
+        ```
+    * Create an environment file by copying the example:
+        ```bash
+        cp .env.example .env
+        ```
+    * Open the new `.env` file and add your database connection URL:
+        ```env
+        # .env
+        DATABASE_URL="postgresql://YOUR_DB_USER:YOUR_DB_PASSWORD@localhost:5432/echoo"
+        PORT=3001
+        ```
+    * Push the database schema to your database:
+        ```bash
+        npx prisma db push
+        ```
+    * Start the backend server:
+        ```bash
+        npm run dev
+        ```
+    ✅ The backend should now be running on `http://localhost:3001`.
+
+
+
+## Available Scripts
+Backend (/backend)
+npm run dev: Starts the backend server with Nodemon for auto-reloading.
+
+Frontend (/frontend)
+npm run dev: Starts the Vite development server for the React app.
+
+### Available Scripts
+
+#### Backend (`/backend`)
+
+* `npm run dev`: Starts the backend server with Nodemon for auto-reloading.
+
+#### Frontend (`/frontend`)
+
+* `npm run dev`: Starts the Vite development server for the React app.
+
+---
+
+### Contributing
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1.  **Fork** the Project
+2.  Create your Feature **Branch**
+    ```bash
+    git checkout -b feature/AmazingFeature
+    ```
+3.  **Commit** your Changes
+    ```bash
+    git commit -m 'Add some AmazingFeature'
+    ```
+4.  **Push** to the Branch
+    ```bash
+    git push origin feature/AmazingFeature
+    ```
+5.  Open a **Pull Request**
+
+
+present here

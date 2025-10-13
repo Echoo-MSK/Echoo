@@ -1,7 +1,19 @@
 import React from 'react';
 import { Filter } from 'lucide-react';
 
-export default function Navbar() {
+interface User {
+  id: string;
+  clerkId: string;
+  username: string;
+  imageUrl: string | null;
+  createdAt: Date | null;
+}
+
+interface NavbarProps {
+  user: User;
+}
+
+export default function Navbar({ user }: NavbarProps) {
   return (
     <header className="sticky top-0 z-10 bg-slate-950/70 backdrop-blur-md">
         <div className="flex items-center justify-between h-16 px-6 border-b border-slate-800">
@@ -24,6 +36,22 @@ export default function Navbar() {
                         <span className="text-xs text-green-400">Online</span>
                     </div>
                 </div>
+
+                {/* --- NEW: USER PROFILE SECTION --- */}
+                <div className="w-px h-6 bg-slate-700" /> {/* A divider for nice spacing */}
+                <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-white">{user.username}</span>
+                    {/* We check if user.imageUrl exists before trying to display it */}
+                    {user.imageUrl && (
+                        <img 
+                            src={user.imageUrl} 
+                            alt={`Profile picture for ${user.username}`}
+                            className="w-8 h-8 rounded-full"
+                        />
+                    )}
+                </div>
+                {/* --- END OF NEW SECTION --- */}
+                
             </div>
         </div>
     </header>

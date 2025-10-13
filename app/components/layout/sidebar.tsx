@@ -11,6 +11,18 @@ import {
     Icon
 } from 'lucide-react';
 
+interface User {
+  id: string;
+  clerkId: string;
+  username: string;
+  imageUrl: string | null;
+  createdAt: Date | null;
+}
+
+interface SidebarProps {
+  user: User;
+}
+
 const Profile = () => (
     <div className="p-4">
         <div className="flex justify-between items-center mb-4">
@@ -80,7 +92,7 @@ const ChannelItem = ({ name, count, status }: ChannelItemProps) => (
 );
 
 
-export default function Sidebar() {
+export default function Sidebar({user}:SidebarProps) {
     return (
         <div className="w-64 bg-slate-900 text-white flex flex-col h-screen font-sans border-r border-slate-800">
             <Profile />
@@ -112,4 +124,3 @@ export default function Sidebar() {
         </div>
     );
 }
-
