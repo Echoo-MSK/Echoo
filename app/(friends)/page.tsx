@@ -136,7 +136,7 @@ const Friends = () => {
 
       {/* Online Friends List section */}
       <div>
-        <h3 className="text-lg font-bold text-white mb-3">Online Friends</h3>
+        <h3 className="text-lg font-bzold text-white mb-3">Online Friends</h3>
         <div className="space-y-2">
           {onlineFriends.map((friend) => (
             <FriendListItem key={friend.name} friend={friend} />

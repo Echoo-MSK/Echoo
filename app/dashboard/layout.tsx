@@ -1,5 +1,5 @@
 import Sidebar  from "@/app/components/layout/sidebar"; // Cleaner import path
-// import Navbar from "@/app/components/layout/navbar";   // Cleaner import path
+import Navbar from "@/app/components/layout/navbar";   // Cleaner import path
 import { redirect } from 'next/navigation';
 import { currentUser as getClerkUser } from '@clerk/nextjs/server';
 import { db } from '@/config/db';
@@ -46,7 +46,7 @@ export default async function DashboardLayout({
       {/* Pass the user data to your components so they can display the user's name/image */}
       <Sidebar user ={userInDb} />
       <div className="flex flex-col flex-1">
-        {/* <Navbar user ={userInDb} /> */}
+        <Navbar user ={userInDb} />
         <div>
           {/* <Friends /> */}
 
