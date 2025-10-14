@@ -78,13 +78,13 @@ export const messages: Message[] = [
 export const onlineMembers: User[] = [
   {
     id: 1,
-    name: "Sarah Chen",
+    name: "KRISHAN SINGH POONIA",
     avatar: "",
     status: "Online",
   },
   {
     id: 2,
-    name: "Liam Patel",
+    name: "MAYANK",
     avatar: "",
     status: "Online",
   },

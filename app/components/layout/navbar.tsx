@@ -1,66 +1,69 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { Filter, Bot } from "lucide-react";
+import { Bot, Filter, Sparkles } from "lucide-react";
 import AiChatWindow from "./AiDrawer";
 
 interface User {
-  id: string; 
+  id: string;
   clerkId: string;
-   username: string; 
-   imageUrl: string | null; 
-   createdAt: Date | null; 
+  username: string;
+  imageUrl: string | null;
+  createdAt: Date | null;
 }
 
 interface NavbarProps {
   user: User;
-  isAiDrawerOpen: boolean;
-  setIsAiDrawerOpen: (isOpen: boolean) => void;
 }
 
-export default function Navbar({ user,  }: NavbarProps) {
-  // Attach click event to open chat using DOM manipulation
+export default function Navbar({ user }: NavbarProps) {
+  // Handle AI Chat Toggle
   useEffect(() => {
     const aiButton = document.getElementById("ai-button");
     const chatWindow = document.getElementById("ai-chat-window");
 
-    if (aiButton && chatWindow) {
-      aiButton.addEventListener("click", () => {
-        chatWindow.classList.toggle("hidden");
-      });
-    }
+    const toggleChat = () => chatWindow?.classList.toggle("hidden");
 
-    return () => {
-      aiButton?.removeEventListener("click", () => {
-        chatWindow?.classList.toggle("hidden");
-      });
-    };
+    aiButton?.addEventListener("click", toggleChat);
+    return () => aiButton?.removeEventListener("click", toggleChat);
   }, []);
 
   return (
     <>
-      <header className="sticky top-0 z-10 bg-slate-950/70 backdrop-blur-md">
-        <div className="flex items-center justify-between h-16 px-6 border-b border-slate-800">
-          <div>
-            <h1 className="text-xl font-bold text-white">Echoo</h1>
+      <header className="sticky top-0 z-50 bg-slate-900/70 backdrop-blur-xl border-b border-slate-800/50 shadow-[0_0_20px_rgba(59,130,246,0.25)]">
+        <div className="flex items-center justify-between h-16 px-6">
+          {/* Brand */}
+          <div className="flex items-center gap-2">
+            <Sparkles className="text-blue-400 animate-pulse" />
+            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+              Echoo
+            </h1>
           </div>
+
+          {/* Right Section */}
           <div className="flex items-center gap-6">
-            <button className="flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors">
+            {/* Filter Button */}
+            <button className="flex items-center gap-2 text-sm text-gray-300 hover:text-blue-400 transition">
               <span>Unified Feed</span>
               <Filter size={16} />
             </button>
-            <div className="w-px h-6 bg-slate-700" />
+
+            <div className="w-px h-6 bg-slate-700/70" />
 
             {/* AI Button */}
             <button
               id="ai-button"
-              className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-500 
+              hover:from-blue-700 hover:to-cyan-600 text-white rounded-xl shadow-[0_0_12px_rgba(0,212,255,0.5)] 
+              transition-all hover:scale-105"
             >
-              <Bot size={18} /> <span>AI</span>
+              <Bot size={18} />
+              <span>AI</span>
             </button>
 
-            <div className="w-px h-6 bg-slate-700" />
+            <div className="w-px h-6 bg-slate-700/70" />
 
+            {/* Online Status */}
             <div className="flex items-center gap-2">
               <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -69,7 +72,9 @@ export default function Navbar({ user,  }: NavbarProps) {
               <span className="text-xs text-green-400">Online</span>
             </div>
 
-            <div className="w-px h-6 bg-slate-700" />
+            <div className="w-px h-6 bg-slate-700/70" />
+
+            {/* Profile */}
             <div className="flex items-center gap-3">
               <span className="text-sm font-medium text-white">
                 {user.username}
@@ -78,7 +83,7 @@ export default function Navbar({ user,  }: NavbarProps) {
                 <img
                   src={user.imageUrl}
                   alt={`Profile picture for ${user.username}`}
-                  className="w-8 h-8 rounded-full"
+                  className="w-9 h-9 rounded-full border border-slate-700 shadow-sm"
                 />
               )}
             </div>
@@ -86,7 +91,7 @@ export default function Navbar({ user,  }: NavbarProps) {
         </div>
       </header>
 
-      {/* Chat Window */}
+      {/* Floating AI Chat Window */}
       <AiChatWindow />
     </>
   );

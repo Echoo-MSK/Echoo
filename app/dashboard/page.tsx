@@ -1,5 +1,5 @@
 import Friends from './friends/page';
-import Contests from "./contest/contest";
+import Contests from "./contests/page";
 import AiChatWindow from '../components/layout/AiDrawer';
 
 export default function DashboardPage() {

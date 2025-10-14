@@ -1,4 +1,4 @@
-// If you are using Next.js for static image imports, import StaticImport from 'next/dist/shared/lib/get-img-props'
+
 import type { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 export interface Server {
@@ -25,10 +25,10 @@ export interface Server {
   
   // export type Channel = TextChannel | VoiceChannel;
  export interface Channel {
-  id: string; // <-- expects string
+  id: string; //
   type: "text" | "voice";
   name: string;
-  serverId: number; // maybe this is also string
+  serverId: number; 
   unread?: number;
   members?: number;
 }
