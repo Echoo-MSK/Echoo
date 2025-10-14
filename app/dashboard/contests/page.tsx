@@ -1,5 +1,7 @@
 import React from 'react';
 
+// import Contests from "./page";
+
 // --- SVG Icon Components needed for Contests ---
 const ViewAllIcon = () => (
     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
@@ -11,7 +13,7 @@ const CameraIcon = () => <svg className="w-5 h-5 mr-3 text-gray-400" fill="none"
 
 
 // --- Contests Component ---
-const Contests = () => {
+ const Contests = () => {
   return (
     <div className="bg-gray-800 h- p-6 rounded-2xl w-full max-w-md text-white font-sans">
       <div className="flex justify-between items-center mb-4">
@@ -65,4 +67,3 @@ const Contests = () => {
 };
 
 export default Contests;
-

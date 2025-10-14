@@ -1,41 +1,19 @@
-// import Navbar from "@/app/components/layout/navbar";
-// import { currentUser as getClerkUser } from '@clerk/nextjs/server';
-// import { redirect } from 'next/navigation';
-import Friends from '@/app/(friends)/page';
+import Friends from './friends/page';
+import Contests from "./contests/page";
+import AiChatWindow from '../components/layout/AiDrawer';
 
-// import { db } from '@/config/db';
-// import { users } from '@/config/schema';
-// import { eq } from 'drizzle-orm';
-import Contests from "../components/contest";
-
-
-export default async function DashboardPage() {
-  // 1. Get the currently logged-in user from Clerk.
-  // const clerkUser = await getClerkUser();
-
-  // if (!clerkUser) {
-  //   redirect('/');
-  // }
-
-  // const userInDb = await db.query.users.findFirst({
-  //   where: eq(users.clerkId, clerkUser.id),
-  // });
-
-  // if (!userInDb) {
-  //   redirect('/');
-  // }
-
+export default function DashboardPage() {
   return (
-    <div>
-      {/* <Navbar user={userInDb} /> */}
-      {/* You can add the rest of your dashboard page content below */}
-      <div className="p-8 flex gap-5">
+    // 1. Removed justify-center and items-center
+    // 2. Added a specific gap-6 for controlled spacing
+    <div className="flex  p-4 gap-6">
+      <div className="">
         <Friends />
-        <Contests />
-
-        
       </div>
-      
+      <div className="">
+        <Contests />
+      </div>
+      {/* <AiChatWindow /> */}
     </div>
   );
 }

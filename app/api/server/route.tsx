@@ -1,56 +1,65 @@
-// import { NextResponse } from 'next/server';
-// import { v4 as uuidv4 } from 'uuid';
-// import { db } from '@/config/db';
-// import { currentUser } from '@/lib/current-user'; // Our helper from Phase 1
-// import { servers, channels, members } from '@/config/schema';
+import { NextResponse } from 'next/server';
+import { currentUser } from '@clerk/nextjs/server';
+import { db } from '@/config/db';
+import { servers, channels, members, users } from '@/config/schema';
+import { eq } from 'drizzle-orm';
 
-// const MEMBER_ROLES = {
-//   OWNER: 'OWNER',
-//   ADMIN: 'ADMIN',
-//   GUEST: 'GUEST',
-// } as const;
+export async function POST(req: Request) {
+  try {
+    const user = await currentUser();
+    if (!user) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
 
-// export async function POST(req: Request) {
-//   try {
-//     const user = await currentUser();
-//     if (!user) {
-//       return new NextResponse('Unauthorized', { status: 401 });
-//     }
+    const { name, imageUrl } = await req.json();
+    if (!name || !imageUrl) {
+      return new NextResponse('Missing name or imageUrl', { status: 400 });
+    }
 
-//     const { name, imageUrl } = await req.json();
-//     if (!name || !imageUrl) {
-//       return new NextResponse('Name or Image URL is missing', { status: 400 });
-//     }
+    
+    let userInDb = await db.query.users.findFirst({
+        where: eq(users.clerkId, user.id)
+    });
 
-//     const newServer = await db.transaction(async (tx) => {
-//       const [createdServer] = await tx
-//         .insert(servers)
-//         .values({
-//           ownerId: user.id,
-//           name: name,
-//           imageUrl: imageUrl,
-//           inviteCode: uuidv4().substring(0, 8),
-//         })
-//         .returning();
+    if (!userInDb) {
+        [userInDb] = await db.insert(users).values({
+            clerkId: user.id,
+            username: user.username || `${user.firstName} ${user.lastName}`,
+            imageUrl: user.imageUrl,
+        }).returning();
+    }
 
-//       await tx.insert(channels).values({
-//         serverId: createdServer.id,
-//         name: 'general',
-//       });
 
-//       await tx.insert(members).values({
-//         serverId: createdServer.id,
-//         userId: user.id,
-//         role: MEMBER_ROLES.OWNER,
-//       });
+    const newServer = await db.transaction(async (tx) => {
+      const [createdServer] = await tx
+        .insert(servers)
+        .values({
+          ownerId: userInDb!.id, 
+          name,
+          imageUrl,
+          inviteCode: crypto.randomUUID().substring(0, 8),
+        })
+        .returning();
 
-//       return createdServer;
-//     });
+      await tx.insert(channels).values({
+        serverId: createdServer.id,
+        name: 'general',
+        type: 'TEXT',
+      });
 
-//     return NextResponse.json(newServer);
+      await tx.insert(members).values({
+        serverId: createdServer.id,
+        userId: userInDb!.id, 
+        role: 'ADMIN',
+      });
 
-//   } catch (error) {
-//     console.error('[SERVERS_POST]', error);
-//     return new NextResponse('Internal Server Error', { status: 500 });
-//   }
-// }
+      return createdServer;
+    });
+
+    return NextResponse.json(newServer);
+
+  } catch (error) {
+    console.error('[SERVERS_POST]', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
+  }
+}
