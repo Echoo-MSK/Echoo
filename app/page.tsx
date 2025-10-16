@@ -80,7 +80,7 @@ export default function Home() {
         >
           🚀 A <span className="text-blue-400 font-semibold">futuristic communication universe</span>  
           powered by AI. Built by <span className="text-purple-400">Krishan</span> &{" "}
-          <span className="text-purple-400">Mayank and shivam</span> — the next-gen Network Engineering duo from DSEU.
+          <span className="text-purple-400">Mayank and Shivam</span> — the next-gen Network Engineering duo from DSEU.
         </motion.p>
 
         <motion.div

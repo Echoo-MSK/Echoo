@@ -13,7 +13,7 @@ import { relations } from "drizzle-orm";
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   clerkId: varchar("clerk_id", { length: 128 }).notNull().unique(),
-  username: varchar("username", { length: 50 }).notNull(),
+  username: varchar("username", { length: 50 }).notNull().unique(),
   imageUrl: text("image_url"),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -61,27 +61,50 @@ export const channels = pgTable("channels", {
 });
 
 // ───────────────────────────────
+// FRIENDS TABLE
+// ───────────────────────────────
+export const friends = pgTable("friends", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  requesterId: uuid("requester_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  addresseeId: uuid("addressee_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  status: varchar("status", { length: 20 }).default("PENDING"), // PENDING | ACCEPTED | BLOCKED
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// ───────────────────────────────
 // MESSAGES TABLE
 // ───────────────────────────────
 export const messages = pgTable("messages", {
   id: uuid("id").defaultRandom().primaryKey(),
   content: text("content").notNull(),
-  channelId: uuid("channel_id")
-    .notNull()
-    .references(() => channels.id, { onDelete: "cascade" }),
-  userId: uuid("user_id")
+
+  // For server messages
+  channelId: uuid("channel_id").references(() => channels.id, { onDelete: "cascade" }),
+
+  // For direct messages (DMs)
+  senderId: uuid("sender_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  receiverId: uuid("receiver_id").references(() => users.id, { onDelete: "cascade" }),
+
+  type: varchar("type", { length: 10 }).default("CHANNEL"), // CHANNEL or DIRECT
+
   createdAt: timestamp("created_at").defaultNow(),
 });
 
 // ───────────────────────────────
-// RELATIONS (optional, for Drizzle relational queries)
+// RELATIONS (Drizzle Relations)
 // ───────────────────────────────
 export const usersRelations = relations(users, ({ many }) => ({
   servers: many(servers),
   messages: many(messages),
   members: many(members),
+  friendsAsRequester: many(friends, { relationName: "requester" }),
+  friendsAsAddressee: many(friends, { relationName: "addressee" }),
 }));
 
 export const serversRelations = relations(servers, ({ one, many }) => ({
@@ -113,12 +136,27 @@ export const membersRelations = relations(members, ({ one }) => ({
 }));
 
 export const messagesRelations = relations(messages, ({ one }) => ({
-  user: one(users, {
-    fields: [messages.userId],
+  sender: one(users, {
+    fields: [messages.senderId],
+    references: [users.id],
+  }),
+  receiver: one(users, {
+    fields: [messages.receiverId],
     references: [users.id],
   }),
   channel: one(channels, {
     fields: [messages.channelId],
     references: [channels.id],
+  }),
+}));
+
+export const friendsRelations = relations(friends, ({ one }) => ({
+  requester: one(users, {
+    fields: [friends.requesterId],
+    references: [users.id],
+  }),
+  addressee: one(users, {
+    fields: [friends.addresseeId],
+    references: [users.id],
   }),
 }));

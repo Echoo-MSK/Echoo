@@ -63,3 +63,37 @@ export async function POST(req: Request) {
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
+
+export async function GET(req:Request){
+
+  try{
+    const user = await currentUser();
+
+    if(!user){
+      return new NextResponse('Unauthorized', {status: 401})
+    }
+
+    const userInDb = await db.query.users.findFirst({
+      where: eq(users.clerkId, user.id)
+    })
+
+
+    if(!userInDb){
+      return new NextResponse('User not Found in Db', {status: 404})
+    }
+
+    const serverList = await db
+    .select({server:servers})
+    .from(members)
+    .leftJoin(servers,eq(members.serverId,servers.id))
+    .where(eq(members.userId, userInDb.id))
+
+    return NextResponse.json(serverList.map(item => item.server))
+
+  }catch(error){
+    console.error(`[SERVERS_GET]`, error)
+    return new NextResponse('Internal Server Error', { status: 500 });
+
+  }
+
+}
