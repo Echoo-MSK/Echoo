@@ -52,3 +52,4 @@ export interface Server {
     roles?: string[];
     username: string;
   }
+  

@@ -79,11 +79,12 @@ export default function Sidebar({ user }: { user: User }) {
         <NavItem href="/dashboard/friends" icon={Users} label="Friends" />
         <NavItem href="/servers" icon={Server} label="Servers" />
         <NavItem href="/dashboard/contests" icon={Trophy} label="Contests" />
+        <NavItem href="/dashboard/AI" icon={Bot} label="AI Chat" />
 
         {/* AI Chat Link with Glow Effect */}
         <div className="relative mt-2">
-          <div className="absolute inset-0 blur-md bg-cyan-500/20 rounded-xl" />
-          <NavItem href="#" icon={Bot} label="AI Chat" />
+          <div className="absolute inset-0 blur-md rounded-xl" />
+          
         </div>
       </nav>
 

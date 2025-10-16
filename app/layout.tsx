@@ -3,9 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Sidebar from "./components/layout/sidebar";
-// import Navbar from "./components/layout/navbar";
-// import DashboardLayout from "./dashboard/layout";
-// import  Friends  from "./(friends)/page";
+import { ModalProvider } from "./components/providers/ModalProvider";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,9 +32,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          {/* <Navbar />
-          <Sidebar /> */}
-          {/* <DashboardLayout>{children}</DashboardLayout> */}
+          <ModalProvider />
           {children}
           
 

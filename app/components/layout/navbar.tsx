@@ -2,7 +2,8 @@
 
 import React, { useEffect } from "react";
 import { Bot, Filter, Sparkles } from "lucide-react";
-import AiChatWindow from "./AiDrawer";
+import AiChatWindow from "@/app/dashboard/AI/page";
+
 
 interface User {
   id: string;
@@ -64,7 +65,7 @@ export default function Navbar({ user }: NavbarProps) {
             <div className="w-px h-6 bg-slate-700/70" />
 
             {/* Online Status */}
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
@@ -72,27 +73,16 @@ export default function Navbar({ user }: NavbarProps) {
               <span className="text-xs text-green-400">Online</span>
             </div>
 
-            <div className="w-px h-6 bg-slate-700/70" />
+            <div className="w-px h-6 bg-slate-700/70" /> */}
 
             {/* Profile */}
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-white">
-                {user.username}
-              </span>
-              {user.imageUrl && (
-                <img
-                  src={user.imageUrl}
-                  alt={`Profile picture for ${user.username}`}
-                  className="w-9 h-9 rounded-full border border-slate-700 shadow-sm"
-                />
-              )}
-            </div>
+            
           </div>
         </div>
       </header>
 
       {/* Floating AI Chat Window */}
-      <AiChatWindow />
+      <AiChatWindow/>
     </>
   );
 }
