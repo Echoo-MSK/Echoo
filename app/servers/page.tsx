@@ -1,49 +1,104 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Home } from "lucide-react";
+import { ChannelList, ChatView, MemberList, ServerList } from "./components";
+import { onlineMembers } from "./data";
 import { useKeyPress } from "@/app/hooks/useKeyPress";
-import {
-  servers,
-  allChannels,
-  messages,
-  onlineMembers,
-} from "@/app/servers/data";
-import {
-  ServerList,
-  ChannelList,
-  ChatView,
-  MemberList,
-} from "@/app/servers/components";
+import { Channel } from "./types";
 
-// import Channel from "@/app/servers/components/ChannelList";
+interface Server {
+    id: string;
+    name: string;
+    imageUrl: string | null;
+}
 
 const ServersView = () => {
   const router = useRouter();
-  const [activeServer, setActiveServer] = useState(servers[0].id);
-  const [activeChannel, setActiveChannel] = useState("general");
+  const [servers, setServers] = useState<Server[]>([]);
+  const [channels, setChannels] = useState<Channel[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingChannels, setIsLoadingChannels] = useState(false);
+  const [activeServerId, setActiveServerId] = useState<string | null>(null);
+  const [activeChannelId, setActiveChannelId] = useState<string | null>(null);
   const [showMembers, setShowMembers] = useState(true);
-  const messageInputRef = useRef<HTMLInputElement>(null) as React.RefObject<HTMLInputElement>;
+  const messageInputRef = useRef<HTMLInputElement>(null);
 
-  useKeyPress("k", (e) => {
-    if (e.ctrlKey || e.metaKey) {
-      e.preventDefault();
-      messageInputRef.current?.focus();
-    }
-  });
+  const handleKPress = useCallback((e: KeyboardEvent) => {
+    if (e.ctrlKey || e.metaKey) e.preventDefault();
+    messageInputRef.current?.focus();
+  }, []); 
 
-  useKeyPress("/", (e) => {
+  const handleSlashPress = useCallback((e: KeyboardEvent) => {
     e.preventDefault();
     messageInputRef.current?.focus();
-  });
+  }, []);
 
-  const currentServer = servers.find((s) => s.id === activeServer);
-  const channels = allChannels.filter((c) => c.serverId === activeServer);
+  useKeyPress("k", handleKPress);
+  useKeyPress("/", handleSlashPress);
+
+  useEffect(() => {
+    const fetchServers = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch('/api/server');
+        if (response.ok) {
+          const data: Server[] = await response.json();
+          setServers(data);
+          if (data.length > 0 && !activeServerId) {
+            setActiveServerId(data[0].id);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch servers:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchServers();
+  }, []);
+
+  useEffect(() => {
+    if (!activeServerId) return;
+
+    const fetchChannels = async () => {
+        setIsLoadingChannels(true);
+        try {
+            const response = await fetch(`/api/servers/${activeServerId}/channels`);
+            if(response.ok) {
+                const data: Channel[] = await response.json();
+                setChannels(data);
+                if (data.length > 0) {
+                    setActiveChannelId(data[0].id);
+                } else {
+                    setActiveChannelId(null);
+                }
+            }
+        } catch (error) {
+            console.error("Failed to fetch channels:", error);
+            setChannels([]);
+            setActiveChannelId(null);
+        } finally {
+            setIsLoadingChannels(false);
+        }
+    };
+
+    fetchChannels();
+  }, [activeServerId]);
+
+  const currentServer = servers.find((s) => s.id === activeServerId);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-full bg-zinc-900 text-zinc-100 items-center justify-center">
+        <p>Loading Your Universe...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex h-screen bg-zinc-900 text-zinc-100 dark-scroll">
-      {/* Glassy Top Bar */}
+    <div className="flex h-screen w-full bg-zinc-900 text-zinc-100">
       <div className="absolute top-0 left-0 right-0 h-12 bg-zinc-900/70 backdrop-blur-md border-b border-zinc-800 z-50 flex items-center px-4">
         <button
           onClick={() => router.push("/dashboard")}
@@ -54,33 +109,49 @@ const ServersView = () => {
         </button>
       </div>
 
-      <div className="pt-12 w-full flex">
+      <div className="pt-12 w-full flex flex-1">
         <ServerList
           servers={servers}
-          activeServer={activeServer}
-          setActiveServer={setActiveServer}
-          icon="server" // Replace "server" with the appropriate icon string if needed
+          activeServerId={activeServerId}
+          setActiveServerId={setActiveServerId}
         />
-
-        <ChannelList
-          currentServer={currentServer}
-          channels={channels}
-          activeChannel={activeChannel}
-          setActiveChannel={setActiveChannel}
-        />
-
-        <div className="flex-1 flex flex-col">
-          <ChatView
-            activeChannel={activeChannel}
-            showMembers={showMembers}
-            setShowMembers={setShowMembers}
-            messages={messages}
-            messageInputRef={messageInputRef}
-            avatar="/default-avatar.png" 
-          />
-        </div>
-
-        {showMembers && <MemberList onlineMembers={onlineMembers} />}
+        
+        {currentServer ? (
+          <>
+            <ChannelList
+              currentServer={currentServer}
+              channels={channels}
+              activeChannelId={activeChannelId}
+              setActiveChannelId={setActiveChannelId}
+              isLoading={isLoadingChannels}
+            />
+            <div className="flex-1 flex flex-col">
+              {activeChannelId ? (
+                <ChatView
+                  key={activeChannelId}
+                  activeChannelId={activeChannelId}
+                  activeChannelName={channels.find(c => c.id === activeChannelId)?.name || ''}
+                  showMembers={showMembers}
+                  setShowMembers={setShowMembers}
+                  messageInputRef={messageInputRef as React.RefObject<HTMLInputElement>}
+                  avatar="/default-avatar.png"
+                />
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
+                  <h2 className="text-xl font-semibold text-white">No channels here</h2>
+                  <p className="text-slate-400 mt-2">Create the first channel to start chatting!</p>
+                </div>
+              )}
+            </div>
+            {showMembers && <MemberList onlineMembers={onlineMembers} />}
+          </>
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
+            <h2 className="text-2xl font-semibold text-white">Welcome to Echoo</h2>
+            <p className="text-slate-400 mt-2">You haven't joined any servers yet.</p>
+            <p className="text-slate-400">Click the '+' to create or the compass to join one!</p>
+          </div>
+        )}
       </div>
     </div>
   );
