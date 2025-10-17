@@ -4,6 +4,7 @@ import "@/app/globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Sidebar from "./components/layout/sidebar";
 import { ModalProvider } from "./components/providers/ModalProvider";
+import { SocketProvider } from "./components/providers/SocketProvider";
 
 
 const geistSans = Geist({
@@ -32,8 +33,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
+          <SocketProvider>  
           <ModalProvider />
           {children}
+          </SocketProvider>
           
 
       </body>

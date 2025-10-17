@@ -30,6 +30,7 @@ export const servers = pgTable("servers", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow(),
+  
 });
 
 // ───────────────────────────────
