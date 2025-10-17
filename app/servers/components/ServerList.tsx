@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { Plus } from "lucide-react";
+import { Plus , Compass } from "lucide-react";
 import { useModalStore } from "@/app/hooks/use-modal-store";
 
 interface Server {
@@ -61,6 +61,13 @@ const ServerList: React.FC<ServerListProps> = ({ servers, activeServerId, setAct
         title="Add a Server"
       >
         <Plus className="text-emerald-500 group-hover:text-white transition-colors" size={24} />
+      </button>
+      <button
+        onClick={() => onOpen("joinServer")}
+        className="group relative flex items-center justify-center w-12 h-12 rounded-full bg-zinc-800 hover:bg-blue-600 transition-all"
+        title="Join a Server"
+      >
+        <Compass className="text-blue-500 group-hover:text-white" size={24} />
       </button>
     </div>
   );

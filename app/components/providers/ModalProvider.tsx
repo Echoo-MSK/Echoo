@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 // import { useModalStore } from "@/app/hooks/use-modal-store";
 import { CreateServerModal } from "../modals/CreateServerModal";
+import { JoinServerModal } from "../modals/JoinServerModal";
 
 
 
@@ -19,6 +20,7 @@ export const ModalProvider = () => {
     return (
         <div>
             <CreateServerModal/>
+            <JoinServerModal />
         </div>
     );
 }
