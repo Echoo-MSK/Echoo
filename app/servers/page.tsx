@@ -65,7 +65,7 @@ const ServersView = () => {
     const fetchChannels = async () => {
         setIsLoadingChannels(true);
         try {
-            const response = await fetch(`/api/servers/${activeServerId}/channels`);
+            const response = await fetch(`/api/servers/${activeServerId}?tyoe=channels`);
             if(response.ok) {
                 const data: Channel[] = await response.json();
                 setChannels(data);
@@ -143,7 +143,9 @@ const ServersView = () => {
                 </div>
               )}
             </div>
-            {showMembers && <MemberList onlineMembers={onlineMembers} />}
+            {showMembers && activeServerId && (
+              <MemberList serverId={activeServerId}  />
+            )}
           </>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
