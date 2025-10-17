@@ -1,9 +1,8 @@
-
 import type { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 export interface Server {
     icon: string | StaticImport;
-    id: number;
+    id: string;
     name: string;
     avatar: string;
     color: string;
@@ -23,16 +22,14 @@ export interface Server {
     serverId: number;
   }
   
-  // export type Channel = TextChannel | VoiceChannel;
  export interface Channel {
-  id: string; //
-  type: "text" | "voice";
+  id: string;
+  type: "TEXT" | "VOICE";
   name: string;
-  serverId: number; 
+  serverId: string; 
   unread?: number;
   members?: number;
 }
-
 
   
   export interface User {
@@ -40,16 +37,15 @@ export interface Server {
   name: string;
   avatar: string;
   status: "Online" | "Idle" | "Offline";
-
 }
   
   export interface Message {
-    avatar: string | StaticImport;
-    id: number;
-    author: Omit<User, 'status'>;
+    id: number | string;
     content: string;
+    channelId: string; 
+    author: Omit<User, 'status'>;
     timestamp: string;
-    roles?: string[];
+    avatar: string | StaticImport;
     username: string;
+    roles?: string[];
   }
-  

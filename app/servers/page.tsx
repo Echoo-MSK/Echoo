@@ -1,87 +1,96 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { Home } from "lucide-react";
-import { useKeyPress } from "@/app/hooks/useKeyPress";
-import {
-  servers,
-  allChannels,
-  messages,
-  onlineMembers,
-} from "@/app/servers/data";
-import {
-  ServerList,
-  ChannelList,
-  ChatView,
-  MemberList,
-} from "@/app/servers/components";
+import { useState, useEffect, useRef } from "react";
+import { ChannelList, ChatView, MemberList, ServerList } from "./components";
+import { onlineMembers, messages, allChannels as mockChannels } from "./data";
 
-// import Channel from "@/app/servers/components/ChannelList";
+interface Server {
+    id: string;
+    name: string;
+    imageUrl: string | null;
+}
 
 const ServersView = () => {
-  const router = useRouter();
-  const [activeServer, setActiveServer] = useState(servers[0].id);
+  const [servers, setServers] = useState<Server[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeServerId, setActiveServerId] = useState<string | null>(null);
+  
   const [activeChannel, setActiveChannel] = useState("general");
   const [showMembers, setShowMembers] = useState(true);
-  const messageInputRef = useRef<HTMLInputElement>(null) as React.RefObject<HTMLInputElement>;
 
-  useKeyPress("k", (e) => {
-    if (e.ctrlKey || e.metaKey) {
-      e.preventDefault();
-      messageInputRef.current?.focus();
-    }
-  });
+  useEffect(() => {
+    const fetchServers = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch('/api/server');
+        if (response.ok) {
+          const data: Server[] = await response.json();
+          setServers(data);
+          // Automatically select the first server if none is selected
+          if (!activeServerId && data.length > 0) {
+            setActiveServerId(data[0].id);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch servers:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  useKeyPress("/", (e) => {
-    e.preventDefault();
-    messageInputRef.current?.focus();
-  });
+    fetchServers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // We only fetch servers once when the page loads
 
-  const currentServer = servers.find((s) => s.id === activeServer);
-  const channels = allChannels.filter((c) => c.serverId === activeServer);
+  const currentServer = servers.find((s) => s.id === activeServerId);
+  // We are still using mock data for channels here. This is our next step.
+  const channels = currentServer ? mockChannels.filter((c) => c.serverId === 1) : []; 
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full w-full text-white bg-zinc-900">
+        <p>Loading Your Universe...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex h-screen bg-zinc-900 text-zinc-100 dark-scroll">
-      {/* Glassy Top Bar */}
-      <div className="absolute top-0 left-0 right-0 h-12 bg-zinc-900/70 backdrop-blur-md border-b border-zinc-800 z-50 flex items-center px-4">
-        <button
-          onClick={() => router.push("/dashboard")}
-          className="flex items-center gap-2 text-zinc-400 hover:text-zinc-100 transition-colors text-sm font-medium"
-        >
-          <Home className="h-4 w-4" />
-          Back to Home
-        </button>
-      </div>
+    <div className="flex h-full w-full bg-zinc-900">
+      <ServerList 
+        servers={servers}
+        activeServerId={activeServerId}
+        setActiveServerId={setActiveServerId}
+      />
 
-      <div className="pt-12 w-full flex">
-        <ServerList
-          servers={servers}
-          activeServer={activeServer}
-          setActiveServer={setActiveServer}
-          icon="server" // Replace "server" with the appropriate icon string if needed
-        />
-
-        <ChannelList
-          currentServer={currentServer}
-          channels={channels}
-          activeChannel={activeChannel}
-          setActiveChannel={setActiveChannel}
-        />
-
-        <div className="flex-1 flex flex-col">
-          <ChatView
+      {currentServer ? (
+        <>
+          <ChannelList
+            currentServer={currentServer}
+            channels={channels}
             activeChannel={activeChannel}
-            showMembers={showMembers}
-            setShowMembers={setShowMembers}
-            messages={messages}
-            messageInputRef={messageInputRef}
-            avatar="/default-avatar.png" 
+            setActiveChannel={setActiveChannel}
           />
-        </div>
 
-        {showMembers && <MemberList onlineMembers={onlineMembers} />}
-      </div>
+          <div className="flex-1 flex flex-col">
+            <ChatView
+              activeChannel={activeChannel}
+              showMembers={showMembers}
+              setShowMembers={setShowMembers}
+              messages={messages}
+              messageInputRef={useRef<HTMLInputElement>(null)}
+              avatar="/default-avatar.png" 
+            />
+          </div>
+
+          {showMembers && <MemberList onlineMembers={onlineMembers} />}
+        </>
+      ) : (
+        <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
+            <h2 className="text-2xl font-semibold text-white">Welcome to Echoo</h2>
+            <p className="text-slate-400 mt-2">You're not in any servers yet.</p>
+            <p className="text-slate-400">Click the '+' icon to create a new server!</p>
+        </div>
+      )}
     </div>
   );
 };
