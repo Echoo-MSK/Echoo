@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 
 
 interface MemberListProps {
-  // onlineMembers: User[],
+  
   serverId: string; 
 }
 

@@ -7,7 +7,7 @@ import {eq} from "drizzle-orm"
 
 
 
-export default async function GET(
+export async function GET(
     req:Request,
     {params} : {params: {serverId:string}}
 ){
@@ -21,13 +21,14 @@ export default async function GET(
         }
 
         if(type === "channels"){
-            const channelList = db.query.channels.findMany({
+            const channelList = await db.query.channels.findMany({
                 where: eq(channels.serverId, params.serverId)
             })
+            return NextResponse.json(channelList)
         }
 
         if(type === "members"){
-            const memberList= await db
+            const memberData= await db
             .select({
                 id: users.id,
                 name: users.username,
@@ -37,6 +38,10 @@ export default async function GET(
             .from(members)
             .leftJoin(users,  eq(members.userId ,users.id))
             .where(eq(members.serverId, params.serverId))
+            const memberList = memberData.map(member => ({
+                ...member,
+                status: "Online" 
+            }));
         return NextResponse.json(memberList)    
         }
 

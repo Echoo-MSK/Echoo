@@ -13,6 +13,7 @@ interface ServerListProps {
     servers: Server[];
     activeServerId: string | null;
     setActiveServerId: (id: string) => void;
+    openCreateModal: ()=> void
 }
   
 const ServerList: React.FC<ServerListProps> = ({ servers, activeServerId, setActiveServerId }) => {
